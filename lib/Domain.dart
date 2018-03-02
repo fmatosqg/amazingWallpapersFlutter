@@ -24,31 +24,29 @@ class ServiceLocator {
     return new MockedAlbumRepo();
   }
 
-  static getAlbumsPresenter(AlbumsViewLoader view) {
-    return new AlbumsPresenter(view: view, albumRepo: getAlbumRepo());
+  static getAlbumsPresenter() {
+    return new AlbumsPresenter(albumRepo: getAlbumRepo());
   }
 }
 
 class AlbumsPresenter {
-  AlbumsViewLoader _view;
+
 
   AlbumRepo _albumRepo;
 
-  AlbumsPresenter({AlbumsViewLoader view, AlbumRepo albumRepo}) {
-    _view = view;
+  AlbumsPresenter({ AlbumRepo albumRepo}) {
     _albumRepo = albumRepo;
   }
 
-  loadData() {
-    _view.loadingItems();
+  loadData(AlbumsViewLoader view) {
+    view.loadingItems();
 
     _albumRepo.getAlbumListAsync()
-        .then((list) => _view.loadedItems(list))
+        .then((list) => view.loadedItems(list))
         .catchError((onError) {
-      _view.loadFailed("Just because");
+      view.loadFailed("Just because");
     }
     );
-
   }
 
 }

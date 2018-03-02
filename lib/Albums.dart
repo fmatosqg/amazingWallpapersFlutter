@@ -14,18 +14,39 @@ abstract class AlbumsViewLoader {
   loadFailed(String errorMessage);
 }
 
-class AlbumsView extends StatelessWidget implements AlbumsViewLoader {
+class AlbumsView extends StatefulWidget {
 
-  AlbumRepo _repo;
+  @override
+  State<StatefulWidget> createState() => new AlbumsViewState();
+
+}
+
+
+class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
+
+  final AlbumRepo _repo = ServiceLocator.getAlbumRepo();
+
   AlbumsPresenter _presenter;
 
   BuildContext _context;
 
-  AlbumsView() {
-    _repo = ServiceLocator.getAlbumRepo();
-    _presenter = ServiceLocator.getAlbumsPresenter(this);
+  List<_CellAlbum> _albumCellList;
 
-    _presenter.loadData();
+  List<AlbumDto> _albumList;
+
+  AlbumsView() {
+//    _presenter = ServiceLocator.getAlbumsPresenter();
+//    _presenter.loadData(this);
+
+//    _albumCellList = _buildAlbumCell();
+  }
+
+  List<_CellAlbum> getCells() {
+    if (_albumCellList != null) {
+      return _albumCellList;
+    } else {
+      return new List<_CellAlbum>();
+    }
   }
 
   @override
@@ -36,16 +57,10 @@ class AlbumsView extends StatelessWidget implements AlbumsViewLoader {
         backgroundColor: Colors.grey[100],
         body: new ListView(
             children: _buildAlbumCell()
+//            children: getCells()
         )
     );
   }
-
-//  @override
-//  loadFailed(String errorMessage) {
-//    print("Error message is $errorMessage");
-//
-//    _neverSatisfied();
-//  }
 
   void onSignedInError() {
     var alert = new AlertDialog(
@@ -82,8 +97,19 @@ class AlbumsView extends StatelessWidget implements AlbumsViewLoader {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _presenter = ServiceLocator.getAlbumsPresenter();
+    _presenter.loadData(this);
+  }
+
+  @override
   loadedItems(List<AlbumDto> albumList) {
-    // TODO: implement loadedItems
+    setState(() {
+      _albumList = albumList;
+    }
+    );
   }
 
   @override
@@ -92,7 +118,13 @@ class AlbumsView extends StatelessWidget implements AlbumsViewLoader {
   }
 
   List<_CellAlbum> _buildAlbumCell() {
-    return _repo.getAlbumList().map((album) =>
+    List<AlbumDto> list = _albumList;
+
+    if (list == null) {
+      list = new List<AlbumDto>();
+    }
+
+    return list.map((album) =>
     new _CellAlbum(album)
     ).toList();
   }
@@ -114,33 +146,29 @@ class _CellAlbum extends StatelessWidget {
 
       child:
       new Card(
-          elevation: 4.0,
+        elevation: 4.0,
 
-          child:
-          new Container(
-            color: Colors.grey[200],
-            child: new Padding(
-              padding: new EdgeInsets.all(10.0),
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
+        child:
+        new Container(
+          color: Colors.grey[200],
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
 
-                children: <Widget>[
+            children: <Widget>[
 
-                  new ThumbnailView(thumbnail: _albumDto.thumbnail),
-                  new Padding(
-                    padding: new EdgeInsets.symmetric(vertical: 8.0),
-                    child:
-                    new TextCaption(
-                        "Very long text that will span multiple lines easilyyy really reallyyyy"),
-                  ),
-                ],
+              new ThumbnailView(thumbnail: _albumDto.thumbnail),
+              new Padding(
+                padding: new EdgeInsets.all(8.0),
+                child:
+                new TextCaption(
+                    "Very long text that will span multiple lines easilyyy really reallyyyy"),
               ),
-            ),
-          )
-      )
-      ,
+            ],
 
+          ),
+        ),
+      ),
 
 //      ),
     );
