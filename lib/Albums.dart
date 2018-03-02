@@ -1,3 +1,5 @@
+import 'package:amazingwallpapers/Domain.dart';
+import 'package:amazingwallpapers/Widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,7 @@ class AlbumsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(title: new Text('Albums')),
+        backgroundColor: Colors.grey[100],
         body: new ListView(
             children: _buildAlbumCell()
         )
@@ -35,55 +38,38 @@ class _CellAlbum extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Padding(
       padding: new EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-      child: new Card(
+
+      child:
+      new Card(
+          elevation: 4.0,
+
           child:
-          new SizedBox(
-            height: 200.0,
-              child: new Image.network(
-                _albumDto.thumbnail,
-                fit: BoxFit.fitWidth,),
-//            ),
+          new Container(
+            color: Colors.grey[200],
+            child: new Padding(
+              padding: new EdgeInsets.all(10.0),
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+
+                children: <Widget>[
+
+                  new ThumbnailView(thumbnail: _albumDto.thumbnail),
+                  new Padding(
+                    padding: new EdgeInsets.symmetric(vertical: 8.0),
+                    child:
+                    new TextCaption(
+                        "Very long text that will span multiple lines easilyyy really reallyyyy"),
+                  ),
+                ],
+              ),
+            ),
           )
-      ),
+      )
+      ,
+
+
+//      ),
     );
-  }
-}
-
-class AlbumRepo {
-  List<AlbumDto> getAlbumList() {
-    return null;
-  }
-}
-
-class AlbumDto {
-
-  AlbumDto({String id, String niceName, String thumbnail}) {
-    this.thumbnail = thumbnail;
-  }
-
-  String id;
-  String niceName = "nice";
-  String thumbnail;
-}
-
-class ServiceLocator {
-  static AlbumRepo getAlbumRepo() {
-    return new MockedAlbumRepo();
-  }
-}
-
-class MockedAlbumRepo extends AlbumRepo {
-  List<AlbumDto> getAlbumList() {
-    List list = new List<AlbumDto>();
-
-    list.add(new AlbumDto(
-        thumbnail: "https://scontent-frt3-2.cdninstagram.com/vp/99d744b652e3acbc1da4977d3a3c770c/5B45E495/t51.2885-15/e35/27892594_1977419992285579_3382350220921667584_n.jpg"));
-    list.add(new AlbumDto(
-        thumbnail: "https://scontent-lht6-1.cdninstagram.com/vp/80c29607484f586669b5c6a0565eb83e/5B102070/t51.2885-15/e35/28436109_2068670090078578_2891429235581255680_n.jpg"));
-
-    list.add(new AlbumDto(
-        thumbnail: "https://scontent-lht6-1.cdninstagram.com/vp/80c29607484f586669b5c6a0565eb83e/5B102070/t51.2885-15/e35/28436109_2068670090078578_2891429235581255680_n.jpg"));
-
-    return list;
   }
 }
