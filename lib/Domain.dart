@@ -1,9 +1,11 @@
+import 'dart:async';
 
+import 'package:amazingwallpapers/Albums.dart';
 
-class AlbumRepo {
-  List<AlbumDto> getAlbumList() {
-    return null;
-  }
+abstract class AlbumRepo {
+  List<AlbumDto> getAlbumList();
+
+  Future<List<AlbumDto>> getAlbumListAsync();
 }
 
 class AlbumDto {
@@ -21,7 +23,36 @@ class ServiceLocator {
   static AlbumRepo getAlbumRepo() {
     return new MockedAlbumRepo();
   }
+
+  static getAlbumsPresenter(AlbumsViewLoader view) {
+    return new AlbumsPresenter(view: view, albumRepo: getAlbumRepo());
+  }
 }
+
+class AlbumsPresenter {
+  AlbumsViewLoader _view;
+
+  AlbumRepo _albumRepo;
+
+  AlbumsPresenter({AlbumsViewLoader view, AlbumRepo albumRepo}) {
+    _view = view;
+    _albumRepo = albumRepo;
+  }
+
+  loadData() {
+    _view.loadingItems();
+
+    _albumRepo.getAlbumListAsync()
+        .then((list) => _view.loadedItems(list))
+        .catchError((onError) {
+      _view.loadFailed("Just because");
+    }
+    );
+
+  }
+
+}
+
 
 class MockedAlbumRepo extends AlbumRepo {
   List<AlbumDto> getAlbumList() {
@@ -37,4 +68,10 @@ class MockedAlbumRepo extends AlbumRepo {
 
     return list;
   }
+
+  @override
+  Future<List<AlbumDto>> getAlbumListAsync() {
+    return new Future.value(getAlbumList());
+  }
 }
+
