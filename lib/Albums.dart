@@ -30,6 +30,7 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
 //  BuildContext _context;
 
   List<AlbumDto> _albumList;
+  List<AlbumDto> _albumListUnfiltered;
   List<String> _dismissedIds = new List();
 
   Scaffold _scaffold;
@@ -92,19 +93,29 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
   @override
   loadedItems(List<AlbumDto> albumList) {
     setState(() {
-      print("List before cleaning ${albumList.length}");
-      var cleanList = albumList
-        ..removeWhere((album) => _dismissedIds.contains(album.idd));
+      _albumListUnfiltered = albumList;
 
-      print("List after cleaning ${albumList.length}");
-      _albumList = cleanList;
-    }
-    );
+      filterList();
+    });
+  }
+
+  List filterList() {
+    _albumList = new List();
+    _albumList.addAll(_albumListUnfiltered);
+
+    _albumList
+        .removeWhere((album) => _dismissedIds.contains(album.idd));
+
+    print("List before cleaning ${_albumListUnfiltered.length}");
+    print("List after cleaning ${_albumList.length}");
+
+    return _albumList;
   }
 
   @override
   loadingItems() {
     // TODO: implement loadingItems
+
   }
 
   Widget _buildAlbumCell() {
@@ -139,11 +150,44 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
 
   void onDismissed(String id, DismissDirection direction,
       BuildContext context) {
-    _dismissedIds.add(id);
+    setState(() {
+      _dismissedIds.add(id);
+      filterList();
+    });
 
-    Scaffold.of(context)
-        .showSnackBar(new SnackBar(content: new Text('Dismissed $id')));
+    showSnackBar(id, context);
   }
+
+  void showSnackBar(String id, BuildContext context) {
+    Scaffold.of(context)
+        .showSnackBar(new SnackBar(
+        content: new Row(
+          children: <Widget>[
+            new Expanded(
+              child: new Text('Dismissed $id',
+                maxLines: 1,
+                overflow: TextOverflow.fade,)
+              ,),
+
+            new MaterialButton(onPressed: () {
+              _undoDismiss(id);
+            },
+                textColor: Colors.blue,
+                child: new Text("Undo",))
+
+          ],
+        )));
+  }
+
+  _undoDismiss(String id) {
+    setState(() {
+      _dismissedIds.remove(id);
+      print("Why did you press the snackbar???");
+      filterList();
+    });
+  }
+
+
 }
 
 typedef void OnDismissAlbum(String id, DismissDirection direction,
