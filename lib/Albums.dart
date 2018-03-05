@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amazingwallpapers/AlbumDto.dart';
 import 'package:amazingwallpapers/Domain.dart';
 import 'package:amazingwallpapers/Widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,12 +35,6 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
 
   List<AlbumDto> _albumList;
 
-  AlbumsView() {
-//    _presenter = ServiceLocator.getAlbumsPresenter();
-//    _presenter.loadData(this);
-
-//    _albumCellList = _buildAlbumCell();
-  }
 
   List<_CellAlbum> getCells() {
     if (_albumCellList != null) {
@@ -57,7 +52,6 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
         backgroundColor: Colors.grey[100],
         body: new ListView(
             children: _buildAlbumCell()
-//            children: getCells()
         )
     );
   }
@@ -162,7 +156,7 @@ class _CellAlbum extends StatelessWidget {
                 padding: new EdgeInsets.all(8.0),
                 child:
                 new TextCaption(
-                    "Very long text that will span multiple lines easilyyy really reallyyyy"),
+                    _albumDto.niceName),
               ),
             ],
 
