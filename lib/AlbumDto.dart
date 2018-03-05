@@ -1,11 +1,12 @@
 class AlbumDto {
 
-  AlbumDto({String id, String niceName, String thumbnail}) {
+  AlbumDto({String id, String niceName, String thumbnail, String idd}) {
     this.thumbnail = thumbnail;
     this.niceName = niceName;
+    this.idd = idd;
   }
 
-  String id;
+  String idd = "-1";
   String niceName = "nice";
   String thumbnail = "https://scontent-frt3-2.cdninstagram.com/vp/99d744b652e3acbc1da4977d3a3c770c/5B45E495/t51.2885-15/e35/27892594_1977419992285579_3382350220921667584_n.jpg";
 
@@ -13,6 +14,7 @@ class AlbumDto {
     return new AlbumDto(
       niceName: json['niceName'],
       thumbnail: json['thumbnail'],
+      idd: json['niceName'],
     );
   }
 

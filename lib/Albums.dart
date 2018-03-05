@@ -25,35 +25,26 @@ class AlbumsView extends StatefulWidget {
 
 class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
 
-  final AlbumRepo _repo = ServiceLocator.getAlbumRepo();
-
   AlbumsPresenter _presenter;
 
-  BuildContext _context;
-
-  List<_CellAlbum> _albumCellList;
+//  BuildContext _context;
 
   List<AlbumDto> _albumList;
+  List<String> _dismissedIds = new List();
 
-
-  List<_CellAlbum> getCells() {
-    if (_albumCellList != null) {
-      return _albumCellList;
-    } else {
-      return new List<_CellAlbum>();
-    }
-  }
+  Scaffold _scaffold;
 
   @override
   Widget build(BuildContext context) {
-    _context = context;
-    return new Scaffold(
+//    _context = context;
+    _scaffold = new Scaffold(
         appBar: new AppBar(title: new Text('Albums')),
         backgroundColor: Colors.grey[100],
-        body: new ListView(
-            children: _buildAlbumCell()
-        )
+        body: _buildAlbumCell()
+
     );
+
+    return _scaffold;
   }
 
   void onSignedInError() {
@@ -61,13 +52,13 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
       title: new Text("Sign in Error"),
       content: new Text("There was an error signing in. Please try again."),
     );
-    showDialog(context: _context, child: alert);
+    showDialog(context: context, child: alert);
   }
 
   @override
   Future<Null> loadFailed(String errorMessage) async {
     return showDialog<Null>(
-      context: _context,
+      context: context,
       barrierDismissible: false, // user must tap button!
       child: new AlertDialog(
 //        title: new Text('Rewind and remember'),
@@ -82,7 +73,7 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
           new FlatButton(
             child: new Text('OK'),
             onPressed: () {
-              Navigator.of(_context).pop();
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -101,7 +92,12 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
   @override
   loadedItems(List<AlbumDto> albumList) {
     setState(() {
-      _albumList = albumList;
+      print("List before cleaning ${albumList.length}");
+      var cleanList = albumList
+        ..removeWhere((album) => _dismissedIds.contains(album.idd));
+
+      print("List after cleaning ${albumList.length}");
+      _albumList = cleanList;
     }
     );
   }
@@ -111,27 +107,54 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
     // TODO: implement loadingItems
   }
 
-  List<_CellAlbum> _buildAlbumCell() {
-    List<AlbumDto> list = _albumList;
+  Widget _buildAlbumCell() {
+    Widget w;
 
-    if (list == null) {
-      list = new List<AlbumDto>();
+    if (_albumList == null) {
+      w = new Center(
+        child: new Column(
+          children: [
+            new Text("Loading"),
+          ],
+        ),
+      );
+    }
+    else {
+      List<Widget> list = _albumList
+          .map((album) => new _CellAlbum(album, onDismissed))
+          .toList();
+
+
+      w =
+      new Stack(
+        children: [
+          new ListView(children: list),
+        ],
+      );
     }
 
-    return list.map((album) =>
-    new _CellAlbum(album)
-    ).toList();
+    return w;
   }
 
+
+  void onDismissed(String id, DismissDirection direction,
+      BuildContext context) {
+    _dismissedIds.add(id);
+
+    Scaffold.of(context)
+        .showSnackBar(new SnackBar(content: new Text('Dismissed $id')));
+  }
 }
+
+typedef void OnDismissAlbum(String id, DismissDirection direction,
+    BuildContext context);
+
 
 class _CellAlbum extends StatelessWidget {
   AlbumDto _albumDto;
+  OnDismissAlbum _dismissable;
 
-  _CellAlbum(AlbumDto albumDto) {
-    _albumDto = albumDto;
-    print(_albumDto.niceName);
-  }
+  _CellAlbum(this._albumDto, this._dismissable);
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +162,11 @@ class _CellAlbum extends StatelessWidget {
       padding: new EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
 
       child:
-      new Card(
+      new Dismissible(
+        key: new Key(_albumDto.idd),
+        onDismissed: (direction) =>
+            _dismissable(_albumDto.idd, direction, context),
+        child: new Card(
         elevation: 4.0,
 
         child:
@@ -159,12 +186,10 @@ class _CellAlbum extends StatelessWidget {
                     _albumDto.niceName),
               ),
             ],
-
           ),
         ),
+        ),
       ),
-
-//      ),
     );
   }
 }
