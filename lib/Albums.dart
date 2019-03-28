@@ -33,12 +33,18 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
   List<String> _dismissedIds = new List();
 
   Scaffold _scaffold;
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  var _isTutorialShown = false;
 
   @override
   Widget build(BuildContext context) {
     _scaffold = new Scaffold(
+      key: _scaffoldKey,
       appBar: new AppBar(
-        title: new Text('Albums'),
+        title: new Text(
+          'Albums',
+          style: Theme.of(context).textTheme.title,
+        ),
       ),
       body: _buildAlbumCell(),
     );
@@ -94,6 +100,13 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
       _albumListUnfiltered = albumList;
 
       filterList();
+
+      if (!_isTutorialShown) {
+        _scaffoldKey.currentState.showSnackBar(
+          new SnackBar(content: Text("Swipe cards to dismiss")),
+        );
+      }
+      _isTutorialShown = true;
     });
   }
 
@@ -121,7 +134,10 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
       w = new Center(
         child: new Column(
           children: [
-            new Text("Loading"),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new Text("Loading"),
+            ),
           ],
         ),
       );
@@ -148,25 +164,25 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
 
   void showSnackBar(String id, BuildContext context) {
     Scaffold.of(context).showSnackBar(new SnackBar(
-            content: new Row(
-          children: <Widget>[
-            new Expanded(
-              child: new Text(
-                'Dismissed $id',
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-              ),
-            ),
-            new MaterialButton(
-                onPressed: () {
-                  _undoDismiss(id);
-                },
-                textColor: Colors.blue,
-                child: new Text(
-                  "Undo",
-                ))
-          ],
-        )));
+        content: new Row(
+      children: <Widget>[
+        new Expanded(
+          child: new Text(
+            'Dismissed $id',
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+          ),
+        ),
+        new MaterialButton(
+            onPressed: () {
+              _undoDismiss(id);
+            },
+            textColor: Colors.blue,
+            child: new Text(
+              "Undo",
+            ))
+      ],
+    )));
   }
 
   _undoDismiss(String id) {

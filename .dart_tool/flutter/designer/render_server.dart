@@ -58,7 +58,7 @@ Iterable<Element> collectAllElementsFrom(Element rootElement) =>
     new CachingIterable<Element>(new _DepthFirstElementIterator(rootElement));
 
 Map<String, dynamic> renderOnce(WidgetsBinding binding) {
-  var rootWidget = new _CellAlbum.forDesignTime();
+  var rootWidget = new AlbumsView.forDesignTime();
   var app = new _DesignerApp(rootWidget);
 
   Map<int, Widget> registeredWidgets =
@@ -224,8 +224,8 @@ class _DesignerApp extends StatelessWidget {
       home: new Scaffold(
         body: new Center(
           child: new SizedBox(
-            width: 624.0,
-            height: 148.0,
+            width: 875.0,
+            height: 1681.0,
             child: widget,
           ),
         ),

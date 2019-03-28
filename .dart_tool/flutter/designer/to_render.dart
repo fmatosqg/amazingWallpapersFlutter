@@ -33,12 +33,18 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
   List<String> _dismissedIds = new List();
 
   Scaffold _scaffold;
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  var _isTutorialShown = false;
 
   @override
   Widget build(BuildContext context) {
     _scaffold = _registerWidgetInstance(1, new Scaffold(
+      key: _scaffoldKey,
       appBar: _registerWidgetInstance(2, new AppBar(
-        title: _registerWidgetInstance(3, new Text('Albums')),
+        title: _registerWidgetInstance(3, new Text(
+          'Albums',
+          style: Theme.of(context).textTheme.title,
+        )),
       )),
       body: _registerWidgetInstance(4, _buildAlbumCell()),
     ));
@@ -94,6 +100,13 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
       _albumListUnfiltered = albumList;
 
       filterList();
+
+      if (!_isTutorialShown) {
+        _scaffoldKey.currentState.showSnackBar(
+          _registerWidgetInstance(14, new SnackBar(content: _registerWidgetInstance(15, Text("Swipe cards to dismiss")))),
+        );
+      }
+      _isTutorialShown = true;
     });
   }
 
@@ -118,19 +131,22 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
     Widget w;
 
     if (_albumList == null) {
-      w = _registerWidgetInstance(14, new Center(
-        child: _registerWidgetInstance(15, new Column(
+      w = _registerWidgetInstance(16, new Center(
+        child: _registerWidgetInstance(17, new Column(
           children: [
-            _registerWidgetInstance(16, new Text("Loading")),
+            _registerWidgetInstance(18, Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _registerWidgetInstance(19, new Text("Loading")),
+            )),
           ],
         )),
       ));
     } else {
       List<Widget> list = _albumList
-          .map((album) => _registerWidgetInstance(17, new _CellAlbum(album, onDismissed)))
+          .map((album) => _registerWidgetInstance(20, new _CellAlbum(album, onDismissed)))
           .toList();
 
-      w = _registerWidgetInstance(18, new ListView(children: list));
+      w = _registerWidgetInstance(21, new ListView(children: list));
     }
 
     return w;
@@ -147,26 +163,26 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
   }
 
   void showSnackBar(String id, BuildContext context) {
-    Scaffold.of(context).showSnackBar(_registerWidgetInstance(19, new SnackBar(
-            content: _registerWidgetInstance(20, new Row(
-          children: <Widget>[
-            _registerWidgetInstance(21, new Expanded(
-              child: _registerWidgetInstance(22, new Text(
-                'Dismissed $id',
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-              )),
-            )),
-            _registerWidgetInstance(23, new MaterialButton(
-                onPressed: () {
-                  _undoDismiss(id);
-                },
-                textColor: Colors.blue,
-                child: _registerWidgetInstance(24, new Text(
-                  "Undo",
-                ))))
-          ],
-        )))));
+    Scaffold.of(context).showSnackBar(_registerWidgetInstance(22, new SnackBar(
+        content: _registerWidgetInstance(23, new Row(
+      children: <Widget>[
+        _registerWidgetInstance(24, new Expanded(
+          child: _registerWidgetInstance(25, new Text(
+            'Dismissed $id',
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+          )),
+        )),
+        _registerWidgetInstance(26, new MaterialButton(
+            onPressed: () {
+              _undoDismiss(id);
+            },
+            textColor: Colors.blue,
+            child: _registerWidgetInstance(27, new Text(
+              "Undo",
+            ))))
+      ],
+    )))));
   }
 
   _undoDismiss(String id) {
@@ -188,29 +204,29 @@ class _CellAlbum extends StatelessWidget {
   _CellAlbum(this._albumDto, this._dismissable);
 
   factory _CellAlbum.forDesignTime() {
-    return _registerWidgetInstance(25, new _CellAlbum(null, null));
+    return _registerWidgetInstance(28, new _CellAlbum(null, null));
   }
 
   @override
   Widget build(BuildContext context) {
-    return _registerWidgetInstance(26, new Padding(
+    return _registerWidgetInstance(29, new Padding(
       padding: new EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-      child: _registerWidgetInstance(27, new Dismissible(
+      child: _registerWidgetInstance(30, new Dismissible(
         key: new Key(_albumDto.idd),
         onDismissed: (direction) =>
             _dismissable(_albumDto.idd, direction, context),
-        child: _registerWidgetInstance(28, new Card(
+        child: _registerWidgetInstance(31, new Card(
           elevation: 4.0,
-          child: _registerWidgetInstance(29, new Container(
+          child: _registerWidgetInstance(32, new Container(
             color: Colors.grey[800],
-            child: _registerWidgetInstance(30, new Column(
+            child: _registerWidgetInstance(33, new Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                _registerWidgetInstance(31, new ThumbnailView(thumbnail: _albumDto.thumbnail)),
-                _registerWidgetInstance(32, new Padding(
+                _registerWidgetInstance(34, new ThumbnailView(thumbnail: _albumDto.thumbnail)),
+                _registerWidgetInstance(35, new Padding(
                   padding: new EdgeInsets.all(8.0),
-                  child: _registerWidgetInstance(33, new TextCaption(
+                  child: _registerWidgetInstance(36, new TextCaption(
                     _albumDto.niceName,
                   )),
                 )),
