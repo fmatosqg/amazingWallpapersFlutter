@@ -1,15 +1,14 @@
 import 'dart:async';
 
-import 'package:amazingwallpapers/AlbumDto.dart';
-import 'package:amazingwallpapers/Albums.dart';
-import 'package:amazingwallpapers/ServerAlbumRepo.dart';
+import 'AlbumDto.dart';
+import 'Albums.dart';
+import 'ServerAlbumRepo.dart';
 
 abstract class AlbumRepo {
   List<AlbumDto> getAlbumList();
 
   Future<List<AlbumDto>> getAlbumListAsync();
 }
-
 
 class ServiceLocator {
   static AlbumRepo getAlbumRepo() {
@@ -22,11 +21,9 @@ class ServiceLocator {
 }
 
 class AlbumsPresenter {
-
-
   AlbumRepo _albumRepo;
 
-  AlbumsPresenter({ AlbumRepo albumRepo}) {
+  AlbumsPresenter({AlbumRepo albumRepo}) {
     _albumRepo = albumRepo;
   }
 
@@ -44,15 +41,13 @@ class AlbumsPresenter {
   String _fetchData(AlbumsViewLoader view) {
     view.loadingItems();
 
-    _albumRepo.getAlbumListAsync()
+    _albumRepo
+        .getAlbumListAsync()
         .then((list) => view.loadedItems(list))
         .catchError((onError) {
       view.loadFailed("Just because");
-    }
-    );
+    });
 
     return "Ok periodic stream";
   }
-
 }
-

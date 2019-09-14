@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:amazingwallpapers/AlbumDto.dart';
-import 'package:amazingwallpapers/Domain.dart';
-import 'package:amazingwallpapers/Widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'AlbumDto.dart';
+import 'Domain.dart';
+import 'Widgets.dart';
 
 abstract class AlbumsViewLoader {
   loadingItems();
@@ -142,11 +143,33 @@ class AlbumsViewState extends State<AlbumsView> implements AlbumsViewLoader {
         ),
       );
     } else {
-      List<Widget> list = _albumList
-          .map((album) => new _CellAlbum(album, onDismissed))
-          .toList();
+      var size = MediaQuery.of(context).size;
 
-      w = new ListView(children: list);
+      int columnCount = 1;
+      while (size.width / columnCount > 600) {
+        columnCount++;
+      }
+
+      final double itemHeight = 250;
+      final double itemWidth = size.width / columnCount;
+
+      double aspectRatio = (itemWidth / itemHeight);
+
+      w = GridView.count(
+        crossAxisCount: columnCount,
+        childAspectRatio: aspectRatio,
+        children: List.generate(_albumList.length, (index) {
+//          return Text("Index  ");
+          AlbumDto album = _albumList.elementAt(index);
+          return _CellAlbum(album, onDismissed);
+        }),
+      );
+
+//      List<Widget> list = _albumList
+//          .map((album) => new _CellAlbum(album, onDismissed))
+//          .toList();
+
+//      w = new ListView(children: list);
     }
 
     return w;

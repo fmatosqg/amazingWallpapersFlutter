@@ -1,5 +1,6 @@
-import 'package:amazingwallpapers/Albums.dart';
 import 'package:flutter/material.dart';
+
+import 'Albums.dart';
 
 void main() => runApp(new MyApp());
 

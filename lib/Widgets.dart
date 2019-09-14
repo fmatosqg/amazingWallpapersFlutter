@@ -15,19 +15,25 @@ class ThumbnailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Container(
       color: Colors.blueGrey[200],
-      foregroundDecoration: new BoxDecoration(
-          gradient: new LinearGradient(
+      foregroundDecoration: BoxDecoration(
+          gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
             Colors.grey[800].withOpacity(0.1),
             Colors.grey[800].withOpacity(0.9)
           ])),
-      child: new Image.network(
+
+//      child: Text("Hello "),
+//      child: FittedBox(
+//        fit: BoxFit.contain,
+//        fit: BoxFit.fill,
+      child: Image.network(
         _thumbnail,
-        height: 150.0,
+        height: 250.0,
         fit: BoxFit.cover,
       ),
+//      ),
     );
   }
 }
