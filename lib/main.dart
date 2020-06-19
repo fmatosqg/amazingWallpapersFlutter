@@ -1,4 +1,6 @@
+import 'package:amazing_wallpapers_flutter/domain/fileManager.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 void main() {
   runApp(MyApp());
@@ -51,6 +53,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int _maxCounter = 20;
 
   void _incrementCounter() {
     setState(() {
@@ -60,6 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      if (_counter >= _maxCounter) {
+        _counter = 0;
+      }
+      writeFile(_counter);
     });
   }
 
@@ -104,9 +111,15 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            FutureBuilder(
+                future: getFilePath(_counter),
+                builder: (context, snapshot) =>
+                    Image.file(File(snapshot.data))),
+            Text("aaa"),
           ],
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
