@@ -4,6 +4,7 @@ import 'package:amazing_wallpapers_flutter/domain/api/AlbumApi.dart';
 import 'package:amazing_wallpapers_flutter/domain/api/AlbumDto.dart';
 import 'package:amazing_wallpapers_flutter/domain/fileManager.dart';
 import 'package:amazing_wallpapers_flutter/domain/getItFactory.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class Preview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 600,
-      color: Colors.amber,
+      color: Colors.amber[100],
       child: ListView(
         children: [
           Align(
@@ -98,21 +99,25 @@ class AlbumView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: widgetWidth,
-      child: Container(
-        color: Colors.amberAccent,
-        padding: EdgeInsets.all(10),
-        margin: EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Container(
-              height: 200,
-              child: _imageView(albumDto.thumbnail),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Text(albumDto.niceName),
-            ),
-          ],
+      padding: EdgeInsets.all(10),
+      child: Material(
+        elevation: 4,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.amberAccent[100],
+        child: Container(
+          margin: EdgeInsets.all(10),
+          child: Column(
+            children: [
+              Container(
+                height: 200,
+                child: _imageView(albumDto.thumbnail),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(albumDto.niceName),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -120,17 +125,13 @@ class AlbumView extends StatelessWidget {
 
   Widget _imageView(String thumbnailUrl) {
     try {
-      // return Image.network(thumbnailUrl);
       if (thumbnailUrl != null) {
-        return Image(
-          image: NetworkImage(thumbnailUrl),
-        );
+        return Image.network(thumbnailUrl);
+      } else {
+        return Text("No image found");
       }
-      return Container();
     } catch (e) {
-      return Container(
-        child: Text("Error ${e.toString()}"),
-      );
+      return Text("Error ");
     }
   }
 }
