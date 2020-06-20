@@ -1,10 +1,13 @@
+import 'package:amazing_wallpapers_flutter/domain/api/AlbumApi.dart';
 import 'package:amazing_wallpapers_flutter/domain/fileManager.dart';
+import 'package:amazing_wallpapers_flutter/domain/getItFactory.dart';
 import 'package:amazing_wallpapers_flutter/ui/preview.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
+  setupGetItFactory();
   runApp(MyApp());
 }
 
@@ -68,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (_counter >= _maxCounter) {
         _counter = 0;
       }
-      writeFile(_counter);
+
     });
   }
 
@@ -113,14 +116,13 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-             SvgPicture.network(
-          'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-          placeholderBuilder: (BuildContext context) => Container(
-              padding: const EdgeInsets.all(30.0),
-              child: const CircularProgressIndicator()),
-        ),
-           Preview(),
-            Text("aaa"),
+            // SvgPicture.network(
+              // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+              // placeholderBuilder: (BuildContext context) => Container(
+                  // padding: const EdgeInsets.all(30.0),
+                  // child: const CircularProgressIndicator()),
+            // ),
+            Preview(),
           ],
         ),
       ),
