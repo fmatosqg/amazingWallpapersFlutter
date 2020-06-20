@@ -4,25 +4,28 @@ import 'package:amazing_wallpapers_flutter/domain/api/AlbumApi.dart';
 import 'package:amazing_wallpapers_flutter/domain/api/AlbumDto.dart';
 import 'package:amazing_wallpapers_flutter/domain/fileManager.dart';
 import 'package:amazing_wallpapers_flutter/domain/getItFactory.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class Preview extends StatelessWidget {
   final minImageWidth = 200;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 600,
-      color: Colors.amber[100],
-      child: ListView(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: _buildResponsibleWrap(),
-          ),
-        ],
+    return Expanded(
+      child: Container(
+        color: Colors.amber[100],
+        child: ListView(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: _buildResponsibleWrap(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -44,7 +47,7 @@ class Preview extends StatelessWidget {
 
   Widget _buildWrap2(double widgetWidth) {
     final api = locator.get<AlbumApi>();
-    return FutureBuilder<List<AlbumDto>>(
+    return FutureBuilder<List<AlbumListDto>>(
       future: api.getAlbumListAsync(),
       initialData: [],
       builder: (context, snapshot) {
@@ -90,7 +93,7 @@ class Preview extends StatelessWidget {
 }
 
 class AlbumView extends StatelessWidget {
-  final AlbumDto albumDto;
+  final AlbumListDto albumDto;
   final double widgetWidth;
 
   AlbumView(this.albumDto, this.widgetWidth);
@@ -103,20 +106,24 @@ class AlbumView extends StatelessWidget {
       child: Material(
         elevation: 4,
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: Colors.amberAccent[100],
-        child: Container(
-          margin: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Container(
-                height: 200,
-                child: _imageView(albumDto.thumbnail),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(albumDto.niceName),
-              ),
-            ],
+        color: Colors.orange[50],
+        child: MaterialButton(
+          onPressed: () =>
+              WallpaperRouter.navigateToAlbumDetail(context, albumDto),
+          child: Container(
+            margin: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Container(
+                  height: 200,
+                  child: _imageView(albumDto.thumbnail),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(albumDto.niceName),
+                ),
+              ],
+            ),
           ),
         ),
       ),

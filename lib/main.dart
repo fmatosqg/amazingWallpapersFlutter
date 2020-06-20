@@ -1,6 +1,8 @@
 import 'package:amazing_wallpapers_flutter/domain/api/AlbumApi.dart';
+import 'package:amazing_wallpapers_flutter/domain/api/AlbumDto.dart';
 import 'package:amazing_wallpapers_flutter/domain/fileManager.dart';
 import 'package:amazing_wallpapers_flutter/domain/getItFactory.dart';
+import 'package:amazing_wallpapers_flutter/ui/AlbumDetailView.dart';
 import 'package:amazing_wallpapers_flutter/ui/preview.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -57,81 +59,47 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  int _maxCounter = 20;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-      if (_counter >= _maxCounter) {
-        _counter = 0;
-      }
-
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            // SvgPicture.network(
-              // 'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
-              // placeholderBuilder: (BuildContext context) => Container(
-                  // padding: const EdgeInsets.all(30.0),
-                  // child: const CircularProgressIndicator()),
-            // ),
-            Preview(),
-          ],
-        ),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    final router = WallpaperRouter();
+    return MaterialApp(
+      initialRoute: router.getInitialRoute(),
+      routes: router.getRoutes(),
     );
+  }
+}
+
+_buildScaffold(String title, Widget mainPanel) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(title),
+    ),
+    body: Center(
+      child: mainPanel,
+    ),
+  );
+}
+
+class WallpaperRouter {
+  static final _start = '/';
+  static final _albumDetail = '/albumDetail';
+
+  static void navigateToAlbumDetail(BuildContext context, AlbumListDto albumDto) =>
+      Navigator.pushNamed(
+        context,
+        _albumDetail,
+        arguments: albumDto,
+      );
+
+  String getInitialRoute() => _start;
+  Map<String, WidgetBuilder> getRoutes() {
+    return {
+      WallpaperRouter._start: (context) => _buildScaffold('Home', Preview()),
+      WallpaperRouter._albumDetail: (context) {
+        final AlbumListDto albumDto = ModalRoute.of(context).settings.arguments;
+
+        return _buildScaffold('Detail ', AlbumDetailView(albumDto));
+      },
+    };
   }
 }
