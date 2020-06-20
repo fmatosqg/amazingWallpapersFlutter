@@ -1,6 +1,8 @@
 import 'package:amazing_wallpapers_flutter/domain/fileManager.dart';
+import 'package:amazing_wallpapers_flutter/ui/preview.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
@@ -111,10 +113,13 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-            FutureBuilder(
-                future: getFilePath(_counter),
-                builder: (context, snapshot) =>
-                    Image.file(File(snapshot.data))),
+             SvgPicture.network(
+          'http://upload.wikimedia.org/wikipedia/commons/0/02/SVG_logo.svg',
+          placeholderBuilder: (BuildContext context) => Container(
+              padding: const EdgeInsets.all(30.0),
+              child: const CircularProgressIndicator()),
+        ),
+           Preview(),
             Text("aaa"),
           ],
         ),
